@@ -25,6 +25,10 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-13 | P2 | Despliegue de la configuración en la VM: generación de contraseñas, `pjsip_auth.conf` y permisos | 0.75\* |
 | 2026-11-13 | P2 | Instalación y configuración de Linphone en PC (1001) e iPhone (1002); verificación de registros | 0.75\* |
 | 2026-11-13 | P2 | Pruebas de la fase 1 (601, 600, llamadas 1001↔1002) y diagnóstico con la consola de Asterisk | 0.75\* |
+| 2026-11-13 | P2 | Diseño y redacción de `voicemail.conf` y subrutinas de horario/buzón en `extensions.conf` | 0.5\* |
+| 2026-11-13 | P2 | Despliegue del buzón; diagnóstico del choque `app_voicemail`/`app_voicemail_odbc` (`noload` en `modules.conf`) | 0.75\* |
+| 2026-11-13 | P2 | Corrección del reloj de la VM (chrony) desfasado 16 min tras pausar la VM | 0.25\* |
+| 2026-11-13 | P2 | Pruebas de horario automático/forzado, buzón (no contesta, cerrado) y consulta con 8500 | 0.5\* |
 | | | **Total** | **____** |
 
 ## Compañero(a)

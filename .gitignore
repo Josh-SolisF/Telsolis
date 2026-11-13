@@ -4,3 +4,4 @@
 *.tfstate*
 .env
 pjsip_auth.conf
+voicemail_buzones.conf

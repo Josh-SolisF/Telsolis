@@ -1,0 +1,12 @@
+; =============================================================================
+;  voicemail_buzones.conf.example
+;  Copiar como voicemail_buzones.conf (en /etc/asterisk/) y cambiar los PIN.
+;  voicemail_buzones.conf está en .gitignore.
+;
+;  Formato:  buzón => PIN,Nombre completo,correo
+;  El PIN es numérico: se marca con el teclado para entrar al buzón.
+; =============================================================================
+
+[telsolis]                 ; "contexto" de buzones: agrupa los buzones del proyecto
+1001 => 0000,PC
+1002 => 0000,Celular
