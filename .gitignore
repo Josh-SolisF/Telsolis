@@ -1,0 +1,6 @@
+# Secretos
+*.pem
+*.key
+*.tfstate*
+.env
+pjsip_auth.conf

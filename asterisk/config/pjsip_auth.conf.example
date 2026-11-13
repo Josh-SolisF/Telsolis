@@ -1,0 +1,14 @@
+; =============================================================================
+;  pjsip_auth.conf.example
+;  Copiar como pjsip_auth.conf (en /etc/asterisk/) y cambiar las contraseñas.
+;  pjsip_auth.conf está en .gitignore: las contraseñas nunca van al repo.
+;  Para generar una contraseña:  openssl rand -base64 18
+; =============================================================================
+
+[1001](auth-interno)
+username=1001
+password=CAMBIAR_ESTA_CLAVE_1001
+
+[1002](auth-interno)
+username=1002
+password=CAMBIAR_ESTA_CLAVE_1002
