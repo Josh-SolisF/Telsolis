@@ -34,12 +34,25 @@ sudo cp /etc/asterisk/extensions.conf /etc/asterisk/extensions.conf.orig
 
 sudo cp ~/Telsolis/asterisk/config/pjsip.conf      /etc/asterisk/
 sudo cp ~/Telsolis/asterisk/config/extensions.conf /etc/asterisk/
-sudo cp ~/Telsolis/asterisk/config/pjsip_auth.conf.example /etc/asterisk/pjsip_auth.conf
-sudo nano /etc/asterisk/pjsip_auth.conf        # poner contraseñas reales
+sudo nano /etc/asterisk/pjsip_auth.conf        # crear el archivo de contraseñas (ver abajo)
 sudo chown asterisk:asterisk /etc/asterisk/*.conf
 sudo chmod 640 /etc/asterisk/pjsip_auth.conf
 
 sudo asterisk -rx "core reload"
+```
+
+`pjsip_auth.conf` no está en el repositorio porque contiene las contraseñas.
+Se crea en la VM con este formato (contraseñas generadas con
+`openssl rand -base64 18`; no pueden contener `;`):
+
+```ini
+[1001](auth-interno)
+username=1001
+password=CONTRASEÑA_1001
+
+[1002](auth-interno)
+username=1002
+password=CONTRASEÑA_1002
 ```
 
 Si `ufw` está activo: `sudo ufw allow 5060/udp && sudo ufw allow 10000:20000/udp`.

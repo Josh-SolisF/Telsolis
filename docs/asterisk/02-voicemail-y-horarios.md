@@ -25,7 +25,7 @@ reinicios.
 |---|---|
 | `voicemail.conf` | Nuevo: ajustes generales del buzón |
 | `voicemail_buzones.conf` | Nuevo, fuera del repo: buzones 1001 y 1002 con su PIN |
-| `extensions.conf` | Subrutinas `sub-horario`, `sub-cambiar-horario`, `sub-llamar-extension`; extensiones 8500 y 7000-7002 |
+| `extensions.conf` | Subrutinas `sub-revisar-horario`, `sub-cambiar-horario`, `sub-llamar-extension`; extensiones 8500 y 7000-7002 |
 
 ## Instalación
 
@@ -40,13 +40,21 @@ sudo timedatectl set-timezone America/Costa_Rica
 
 sudo cp /etc/asterisk/voicemail.conf /etc/asterisk/voicemail.conf.orig
 sudo cp ~/voicemail.conf ~/extensions.conf /etc/asterisk/
-sudo cp ~/voicemail_buzones.conf.example /etc/asterisk/voicemail_buzones.conf
-sudo nano /etc/asterisk/voicemail_buzones.conf     # cambiar los PIN
+sudo nano /etc/asterisk/voicemail_buzones.conf    # crear los buzones (ver abajo)
 sudo chown asterisk:asterisk /etc/asterisk/voicemail*.conf /etc/asterisk/extensions.conf
 sudo chmod 640 /etc/asterisk/voicemail_buzones.conf
 
 # Reinicio completo (un reload no carga un módulo que no cargó al arrancar)
 sudo systemctl restart asterisk
+```
+
+`voicemail_buzones.conf` no está en el repositorio porque contiene los PIN. Se
+crea en la VM con este formato (`buzón => PIN,nombre`; el PIN es numérico):
+
+```ini
+[telsolis]
+1001 => PIN_1001,PC
+1002 => PIN_1002,Celular
 ```
 
 ## Verificación

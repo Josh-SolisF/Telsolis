@@ -29,6 +29,9 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-13 | P2 | Despliegue del buzón; diagnóstico del choque `app_voicemail`/`app_voicemail_odbc` (`noload` en `modules.conf`) | 0.75\* |
 | 2026-11-13 | P2 | Corrección del reloj de la VM (chrony) desfasado 16 min tras pausar la VM | 0.25\* |
 | 2026-11-13 | P2 | Pruebas de horario automático/forzado, buzón (no contesta, cerrado) y consulta con 8500 | 0.5\* |
+| 2026-11-19 | P2 | Cuarto de conferencias: `confbridge.conf` (perfiles de sala, participante y menú), extensión 8000 y pruebas | ____ |
+| 2026-11-19 | P2 | Transferencias: `features.conf` (ciega `#1`, consultada `*2`), opciones `tT` en `Dial()` y pruebas | ____ |
+| 2026-11-20 | P2 | Menú: contexto `menu-principal`, opción "todos", grabación de audios (9001-9003), simulación 9000 y pruebas | ____ |
 | | | **Total** | **____** |
 
 ## Compañero(a)
