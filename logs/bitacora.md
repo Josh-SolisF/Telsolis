@@ -32,6 +32,7 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-19 | P2 | Cuarto de conferencias: `confbridge.conf` (perfiles de sala, participante y menú), extensión 8000 y pruebas | ____ |
 | 2026-11-19 | P2 | Transferencias: `features.conf` (ciega `#1`, consultada `*2`), opciones `tT` en `Dial()` y pruebas | ____ |
 | 2026-11-20 | P2 | Menú: contexto `menu-principal`, opción "todos", grabación de audios (9001-9003), simulación 9000 y pruebas | ____ |
+| 2026-11-21 | P2 | Troncal Ring.cr: creación en el portal sip.cr, diagnóstico del servidor (IP privada vs pública) y configuración PJSIP | ____ |
 | | | **Total** | **____** |
 
 ## Compañero(a)
