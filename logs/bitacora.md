@@ -35,7 +35,7 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-21 | P2 | Troncal Ring.cr: creación en el portal sip.cr, diagnóstico del servidor (IP privada vs pública) y configuración PJSIP | ____ |
 | | | **Total** | **____** |
 
-## Compañero(a)
+## Jesús Solís
 
 | Fecha | Proyecto | Actividad | Horas |
 |---|---|---|---|
@@ -44,4 +44,6 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-22 | PaaS | Migración del BIND (servicio 1) a la LAN 192.168.56.0/24 y pruebas con dig | ____ |
 | 2026-11-23 | PaaS | Clonación de las VMs db (.11) y web (.12); DNS de la LAN apuntando al BIND y eliminación de Docker en ambas | ____ |
 | 2026-11-23 | PaaS | MySQL en db: escucha en la LAN (`zz-telsolis.cnf`), base `wordpress` y usuario `wp` limitado a la VM web; pruebas de acceso | ____ |
+| 2026-11-23 | PaaS | Apache + PHP en web; sitio `wordpress.conf`, descarga de WordPress e instalación conectada a db.telsolis.test | ____ |
+| 2026-11-23 | PaaS | Regla NRPT en Windows para resolver `*.telsolis.test` con el BIND en cualquier red | ____ |
 | | | **Total** | **____** |
