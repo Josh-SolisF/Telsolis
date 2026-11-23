@@ -1,0 +1,67 @@
+# Telsolis: ownCloud (basado en el ejemplo oficial de ownCloud 11)
+# Solo ownCloud se publica en la LAN; MariaDB y Redis quedan en la red interna de Docker.
+services:
+  owncloud:
+    image: owncloud/server:${OWNCLOUD_IMAGE}
+    container_name: owncloud
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "192.168.56.10:80:8080"
+    environment:
+      - OWNCLOUD_DOMAIN=${OWNCLOUD_DOMAIN}
+      - OWNCLOUD_TRUSTED_DOMAINS=${OWNCLOUD_TRUSTED_DOMAINS}
+      - OWNCLOUD_OVERWRITE_CLI_URL=${OWNCLOUD_OVERWRITE_CLI_URL}
+      - OWNCLOUD_DB_TYPE=mysql
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=${MARIADB_PASSWORD}
+      - OWNCLOUD_DB_HOST=mariadb
+      - OWNCLOUD_ADMIN_USERNAME=${ADMIN_USERNAME}
+      - OWNCLOUD_ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - OWNCLOUD_MYSQL_UTF8MB4=true
+      - OWNCLOUD_REDIS_ENABLED=true
+      - OWNCLOUD_REDIS_HOST=redis
+    volumes:
+      - owncloud-archivos:/mnt/data
+
+  mariadb:
+    image: mariadb:${MARIADB_IMAGE}
+    container_name: owncloud-mariadb
+    restart: unless-stopped
+    environment:
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+      - MARIADB_USER=owncloud
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
+      - MARIADB_DATABASE=owncloud
+      - MARIADB_AUTO_UPGRADE=1
+    command: ["--max-allowed-packet=128M", "--innodb-log-file-size=64M"]
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - owncloud-bd:/var/lib/mysql
+
+  redis:
+    image: redis:${REDIS_IMAGE}
+    container_name: owncloud-redis
+    restart: unless-stopped
+    command: ["--databases", "1"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - owncloud-redis:/data
+
+volumes:
+  owncloud-archivos:
+  owncloud-bd:
+  owncloud-redis:

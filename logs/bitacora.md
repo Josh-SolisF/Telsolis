@@ -50,5 +50,7 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-23 | PaaS | WordPress por HTTP y HTTPS (esquema dinámico en wp-config) e importación de la CA en Windows | ____ |
 | 2026-11-23 | PaaS | Servicio 2 de Compose: Samba con imagen propia (Dockerfile sobre Ubuntu 24.04), volúmenes de datos y usuarios | ____ |
 | 2026-11-23 | PaaS | Montaje CIFS permanente en web (fstab) y acceso desde el Explorador de Windows; pruebas cruzadas | ____ |
+| 2026-11-23 | PaaS | Servicio 3 de Compose: ownCloud 11 (imagen oficial) con MariaDB y Redis internos; secretos en `.env`; registro DNS | ____ |
+| 2026-11-23 | PaaS | Pruebas de ownCloud: subir archivos, usuario de prueba (`occ`), compartir y persistencia tras `down`/`up` | ____ |
 | | | **Total** | **____** |
 
