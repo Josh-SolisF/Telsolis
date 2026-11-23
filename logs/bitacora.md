@@ -46,4 +46,7 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-23 | PaaS | MySQL en db: escucha en la LAN (`zz-telsolis.cnf`), base `wordpress` y usuario `wp` limitado a la VM web; pruebas de acceso | ____ |
 | 2026-11-23 | PaaS | Apache + PHP en web; sitio `wordpress.conf`, descarga de WordPress e instalación conectada a db.telsolis.test | ____ |
 | 2026-11-23 | PaaS | Regla NRPT en Windows para resolver `*.telsolis.test` con el BIND en cualquier red | ____ |
+| 2026-11-23 | PaaS | CA propia con OpenSSL en docker (Telsolis Root CA); CSR en web, firma con SAN e instalación en Apache (443) | ____ |
+| 2026-11-23 | PaaS | WordPress por HTTP y HTTPS (esquema dinámico en wp-config) e importación de la CA en Windows | ____ |
 | | | **Total** | **____** |
+

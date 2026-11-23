@@ -1,4 +1,9 @@
 <?php
+// Telsolis: el sitio responde por HTTP (80) y por HTTPS (443);
+// la URL se arma con el esquema de cada peticion.
+$telsolis_esquema = ( ! empty( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ) ? 'https' : 'http';
+define( 'WP_HOME',    $telsolis_esquema . '://web.telsolis.test' );
+define( 'WP_SITEURL', $telsolis_esquema . '://web.telsolis.test' );
 /**
  * The base configuration for WordPress
  *
