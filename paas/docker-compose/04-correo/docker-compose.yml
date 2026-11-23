@@ -1,0 +1,32 @@
+# Telsolis: servidor de correo (Postfix + Dovecot) con docker-mailserver
+services:
+  mailserver:
+    image: ghcr.io/docker-mailserver/docker-mailserver:16.0.1
+    container_name: mailserver
+    hostname: mail.telsolis.test
+    env_file: mailserver.env
+    dns:
+      - 192.168.56.10                 # el BIND del servicio 01
+    ports:
+      - "192.168.56.10:25:25"         # SMTP: recepción entre servidores
+      - "192.168.56.10:587:587"       # Submission: los clientes envían (con usuario y STARTTLS)
+      - "192.168.56.10:993:993"       # IMAPS: los clientes leen el buzón (TLS)
+    volumes:
+      - ./certs/:/tmp/dms/custom-certs/:ro
+      - correo-config:/tmp/docker-mailserver/   # cuentas (contraseñas cifradas): fuera del repo
+      - correo-buzones:/var/mail/
+      - correo-estado:/var/mail-state/
+      - correo-logs:/var/log/mail/
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    stop_grace_period: 1m
+    healthcheck:
+      test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
+      timeout: 3s
+      retries: 0
+
+volumes:
+  correo-config:
+  correo-buzones:
+  correo-estado:
+  correo-logs:

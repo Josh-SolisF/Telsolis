@@ -52,5 +52,7 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-23 | PaaS | Montaje CIFS permanente en web (fstab) y acceso desde el Explorador de Windows; pruebas cruzadas | ____ |
 | 2026-11-23 | PaaS | Servicio 3 de Compose: ownCloud 11 (imagen oficial) con MariaDB y Redis internos; secretos en `.env`; registro DNS | ____ |
 | 2026-11-23 | PaaS | Pruebas de ownCloud: subir archivos, usuario de prueba (`occ`), compartir y persistencia tras `down`/`up` | ____ |
+| 2026-11-23 | PaaS | Servicio 4 de Compose: correo con docker-mailserver 16.0.1 (Postfix + Dovecot), registros A y MX, certificado de mail firmado por la CA propia | ____ |
+| 2026-11-23 | PaaS | Cuentas jesus/joshua y alias postmaster; Thunderbird (IMAPS 993, submission 587); diagnóstico del asistente de Thunderbird con openssl s_client y logs | ____ |
 | | | **Total** | **____** |
 
