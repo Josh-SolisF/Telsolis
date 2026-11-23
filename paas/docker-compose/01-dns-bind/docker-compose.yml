@@ -3,8 +3,8 @@ services:
     image: internetsystemsconsortium/bind9:9.20
     container_name: bind
     ports:
-      - "192.168.40.171:53:53/udp"
-      - "192.168.40.171:53:53/tcp"
+      - "192.168.56.10:53:53/udp"
+      - "192.168.56.10:53:53/tcp"
     volumes:
       - ./config/named.conf:/etc/bind/named.conf:ro
       - ./zones:/etc/bind/zones:ro
