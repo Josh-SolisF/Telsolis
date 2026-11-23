@@ -1,0 +1,6 @@
+# Telsolis: montaje permanente de Samba en un cliente Linux (VM web)
+# Requiere: sudo apt install cifs-utils
+# /root/.smb-telsolis (chmod 600) contiene:
+#   username=telsolis-smb
+#   password=CONTRASEÑA_SAMBA
+//docker.telsolis.test/compartido /mnt/compartido cifs credentials=/root/.smb-telsolis,uid=1000,gid=1000,_netdev,nofail,x-systemd.automount 0 0

@@ -48,5 +48,7 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-23 | PaaS | Regla NRPT en Windows para resolver `*.telsolis.test` con el BIND en cualquier red | ____ |
 | 2026-11-23 | PaaS | CA propia con OpenSSL en docker (Telsolis Root CA); CSR en web, firma con SAN e instalación en Apache (443) | ____ |
 | 2026-11-23 | PaaS | WordPress por HTTP y HTTPS (esquema dinámico en wp-config) e importación de la CA en Windows | ____ |
+| 2026-11-23 | PaaS | Servicio 2 de Compose: Samba con imagen propia (Dockerfile sobre Ubuntu 24.04), volúmenes de datos y usuarios | ____ |
+| 2026-11-23 | PaaS | Montaje CIFS permanente en web (fstab) y acceso desde el Explorador de Windows; pruebas cruzadas | ____ |
 | | | **Total** | **____** |
 

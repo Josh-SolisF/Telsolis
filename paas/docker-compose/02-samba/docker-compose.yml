@@ -1,0 +1,16 @@
+services:
+  samba:
+    build: .
+    image: telsolis/samba
+    container_name: samba
+    ports:
+      - "192.168.56.10:445:445"
+    volumes:
+      - ./config/smb.conf:/etc/samba/smb.conf:ro
+      - samba-datos:/srv/compartido     # archivos compartidos
+      - samba-usuarios:/var/lib/samba   # base de usuarios/contraseñas de Samba
+    restart: unless-stopped
+
+volumes:
+  samba-datos:
+  samba-usuarios:
