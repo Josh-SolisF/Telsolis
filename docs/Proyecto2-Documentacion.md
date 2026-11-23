@@ -59,7 +59,7 @@ para escuchar el menú de la central.
 | Componente | Herramienta | Uso |
 |---|---|---|
 | Equipo anfitrión | Laptop con Windows | Ejecuta la máquina virtual y el softphone de la computadora |
-| Virtualización | Oracle VirtualBox | Máquina virtual `telsolis`, red en modo puente (192.168.40.170) |
+| Virtualización | Oracle VirtualBox | Máquina virtual `telsolis`, red en modo puente (192.168.77.170) |
 | Sistema operativo | Ubuntu Server 26.04.1 LTS | Sistema de la máquina virtual |
 | PBX | Asterisk 22.5.2 | Central telefónica, con el canal SIP `chan_pjsip` |
 | Sincronización de hora | chrony | Mantiene la hora correcta, necesaria para el horario de atención |
@@ -77,7 +77,7 @@ implementó con la configuración de Asterisk y su plan de marcado.
 ### 3.1 Red
 
 La máquina virtual está en **modo puente**, por lo que tiene su propia
-dirección en la red local (192.168.40.170). Los softphones se registran en
+dirección en la red local (192.168.77.170). Los softphones se registran en
 Asterisk por SIP y el audio viaja por RTP, siempre pasando por Asterisk.
 
 Para la conexión con la red pública, Asterisk se **registra** en el servidor de
