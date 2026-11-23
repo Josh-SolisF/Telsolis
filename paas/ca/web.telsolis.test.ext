@@ -1,0 +1,4 @@
+basicConstraints = CA:FALSE
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = DNS:web.telsolis.test, IP:192.168.56.12
