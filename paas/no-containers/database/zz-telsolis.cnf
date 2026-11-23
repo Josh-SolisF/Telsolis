@@ -1,0 +1,4 @@
+# Telsolis: MySQL escucha solo en la LAN del examen (red solo-anfitrion)
+[mysqld]
+bind-address        = 192.168.56.11
+mysqlx-bind-address = 127.0.0.1

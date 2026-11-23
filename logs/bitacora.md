@@ -42,4 +42,6 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-22 | PaaS | Clonación de la VM docker en otra compu; red NAT + solo-anfitrión con IP fija 192.168.56.10 (netplan) | ____ |
 | 2026-11-22 | PaaS | Instalación de Docker 29.1.3 y Compose 2.40.3 (`--no-install-recommends` por error 403 del mirror) y llave SSH para GitHub | ____ |
 | 2026-11-22 | PaaS | Migración del BIND (servicio 1) a la LAN 192.168.56.0/24 y pruebas con dig | ____ |
+| 2026-11-23 | PaaS | Clonación de las VMs db (.11) y web (.12); DNS de la LAN apuntando al BIND y eliminación de Docker en ambas | ____ |
+| 2026-11-23 | PaaS | MySQL en db: escucha en la LAN (`zz-telsolis.cnf`), base `wordpress` y usuario `wp` limitado a la VM web; pruebas de acceso | ____ |
 | | | **Total** | **____** |
