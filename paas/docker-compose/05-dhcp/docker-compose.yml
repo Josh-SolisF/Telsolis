@@ -1,0 +1,18 @@
+# Telsolis: DHCP con Kea (imagen oficial de ISC)
+# network_mode host: los broadcasts DHCP no atraviesan la red virtual de Docker,
+# por eso Kea usa directamente la interfaz enp0s9 de la VM.
+services:
+  kea-dhcp4:
+    image: docker.cloudsmith.io/isc/docker/kea-dhcp4:3.0.2
+    container_name: kea-dhcp4
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW            # sockets raw para responder a clientes sin IP
+    volumes:
+      - ./config/kea-dhcp4.conf:/etc/kea/kea-dhcp4.conf:ro
+      - kea-leases:/var/lib/kea
+    restart: unless-stopped
+
+volumes:
+  kea-leases:

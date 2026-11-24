@@ -54,5 +54,6 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-23 | PaaS | Pruebas de ownCloud: subir archivos, usuario de prueba (`occ`), compartir y persistencia tras `down`/`up` | ____ |
 | 2026-11-23 | PaaS | Servicio 4 de Compose: correo con docker-mailserver 16.0.1 (Postfix + Dovecot), registros A y MX, certificado de mail firmado por la CA propia | ____ |
 | 2026-11-23 | PaaS | Cuentas jesus/joshua y alias postmaster; Thunderbird (IMAPS 993, submission 587); diagnóstico del asistente de Thunderbird con openssl s_client y logs | ____ |
+| 2026-11-23 | PaaS | Servicio 5: DHCP con Kea 3.0.2 (imagen oficial ISC) en red interna de VirtualBox 10.20.0.0/24, network_mode host y sockets raw | ____ |
+| 2026-11-23 | PaaS | Tercer adaptador (red interna) en docker y web; pruebas de préstamo y diagnóstico de client-id; respuestas del profe y decisión de ruta A | ____ |
 | | | **Total** | **____** |
-
