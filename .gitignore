@@ -6,3 +6,10 @@
 pjsip_auth.conf
 voicemail_buzones.conf
 wp-config.php
+# Terraform / AWS / VPN
+.terraform/
+*.tfvars
+*.tfplan
+.terraform.lock.hcl.bak
+*.ovpn
+paas/vpn/ansible/clientes/
