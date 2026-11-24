@@ -1,0 +1,29 @@
+# Telsolis: docker como puerta de enlace de la WAN simulada (10.20.0.0/24)
+# Reenvía el tráfico de los clientes DHCP hacia la LAN de servicios (enp0s8)
+# y hacia internet (enp0s3, NAT de VirtualBox), con NAT en ambas salidas.
+# Las reglas van en la cadena DOCKER-USER, que Docker reserva para reglas propias.
+[Unit]
+Description=Telsolis: enrutamiento WAN -> LAN e internet
+After=docker.service network-online.target
+Requires=docker.service
+PartOf=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# Permitir conexiones nuevas desde la WAN hacia la LAN y hacia internet
+ExecStart=/bin/sh -c 'iptables -C DOCKER-USER -i enp0s9 -o enp0s8 -j ACCEPT 2>/dev/null || iptables -I DOCKER-USER -i enp0s9 -o enp0s8 -j ACCEPT'
+ExecStart=/bin/sh -c 'iptables -C DOCKER-USER -i enp0s9 -o enp0s3 -j ACCEPT 2>/dev/null || iptables -I DOCKER-USER -i enp0s9 -o enp0s3 -j ACCEPT'
+# Permitir solo las respuestas de vuelta hacia la WAN
+ExecStart=/bin/sh -c 'iptables -C DOCKER-USER -o enp0s9 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT 2>/dev/null || iptables -I DOCKER-USER -o enp0s9 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT'
+# NAT de la WAN al salir hacia la LAN y hacia internet
+ExecStart=/bin/sh -c 'iptables -t nat -C POSTROUTING -s 10.20.0.0/24 -o enp0s8 -j MASQUERADE 2>/dev/null || iptables -t nat -A POSTROUTING -s 10.20.0.0/24 -o enp0s8 -j MASQUERADE'
+ExecStart=/bin/sh -c 'iptables -t nat -C POSTROUTING -s 10.20.0.0/24 -o enp0s3 -j MASQUERADE 2>/dev/null || iptables -t nat -A POSTROUTING -s 10.20.0.0/24 -o enp0s3 -j MASQUERADE'
+ExecStop=-/usr/sbin/iptables -D DOCKER-USER -i enp0s9 -o enp0s8 -j ACCEPT
+ExecStop=-/usr/sbin/iptables -D DOCKER-USER -i enp0s9 -o enp0s3 -j ACCEPT
+ExecStop=-/usr/sbin/iptables -D DOCKER-USER -o enp0s9 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+ExecStop=-/usr/sbin/iptables -t nat -D POSTROUTING -s 10.20.0.0/24 -o enp0s8 -j MASQUERADE
+ExecStop=-/usr/sbin/iptables -t nat -D POSTROUTING -s 10.20.0.0/24 -o enp0s3 -j MASQUERADE
+
+[Install]
+WantedBy=multi-user.target

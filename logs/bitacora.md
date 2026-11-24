@@ -56,4 +56,6 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-23 | PaaS | Cuentas jesus/joshua y alias postmaster; Thunderbird (IMAPS 993, submission 587); diagnóstico del asistente de Thunderbird con openssl s_client y logs | ____ |
 | 2026-11-23 | PaaS | Servicio 5: DHCP con Kea 3.0.2 (imagen oficial ISC) en red interna de VirtualBox 10.20.0.0/24, network_mode host y sockets raw | ____ |
 | 2026-11-23 | PaaS | Tercer adaptador (red interna) en docker y web; pruebas de préstamo y diagnóstico de client-id; respuestas del profe y decisión de ruta A | ____ |
+| 2026-11-23 | PaaS | DHCP publicado para la WAN: red telsolis-wan, opción routers, docker como puerta de enlace (DOCKER-USER + NAT en servicio systemd) | ____ |
+| 2026-11-23 | PaaS | VM cliente-wan (un solo adaptador); diagnóstico: netplan del instalador amarrado a la MAC original y PID viejo de Kea (tmpfs en /var/run/kea) | ____ |
 | | | **Total** | **____** |

@@ -12,6 +12,8 @@ services:
     volumes:
       - ./config/kea-dhcp4.conf:/etc/kea/kea-dhcp4.conf:ro
       - kea-leases:/var/lib/kea
+    tmpfs:
+      - /var/run/kea:mode=1777   # PID en memoria: se limpia en cada arranque
     restart: unless-stopped
 
 volumes:

@@ -1,0 +1,8 @@
+# Telsolis: WAN simulada (red interna de VirtualBox "telsolis-wan")
+# docker es la puerta de enlace de la WAN y el servidor DHCP (Kea) escucha aquí.
+network:
+  version: 2
+  ethernets:
+    enp0s9:
+      dhcp4: false
+      addresses: [10.20.0.1/24]
