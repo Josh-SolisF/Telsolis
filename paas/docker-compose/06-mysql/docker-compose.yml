@@ -1,0 +1,23 @@
+# Telsolis: Database Server (MySQL 8.4 LTS, imagen oficial)
+# Base de datos del WordPress que corre en Kubernetes (VM k8s): el CMS y su BD en servidores distintos.
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      WPK8S_PASSWORD: ${WPK8S_PASSWORD}
+    ports:
+      - "192.168.56.10:3306:3306"     # solo en la LAN del examen
+    volumes:
+      - mysql-datos:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql-datos:

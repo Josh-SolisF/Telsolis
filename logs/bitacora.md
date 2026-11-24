@@ -58,4 +58,11 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-23 | PaaS | Tercer adaptador (red interna) en docker y web; pruebas de préstamo y diagnóstico de client-id; respuestas del profe y decisión de ruta A | ____ |
 | 2026-11-23 | PaaS | DHCP publicado para la WAN: red telsolis-wan, opción routers, docker como puerta de enlace (DOCKER-USER + NAT en servicio systemd) | ____ |
 | 2026-11-23 | PaaS | VM cliente-wan (un solo adaptador); diagnóstico: netplan del instalador amarrado a la MAC original y PID viejo de Kea (tmpfs en /var/run/kea) | ____ |
+| 2026-11-24 | PaaS | Registro del dominio telsolis.tech (name.com); instalación de Terraform 1.17.2, AWS CLI y Ansible; llave SSH para AWS | ____ |
+| 2026-11-24 | PaaS | Código IaC de la VPN: Terraform (EC2, security group, EIP, inventario) y playbook de Ansible (OpenVPN TAP/TUN, easy-rsa, NAT, perfiles) | ____ |
+| 2026-11-24 | PaaS | Glue records ns1/ns2.telsolis.tech y nameservers en name.com; BIND autoritativo en la EC2 (Ansible) | ____ |
+| 2026-11-24 | PaaS | VM web como cliente VPN con IP fija 10.8.2.200; Nginx en AWS como proxy por el túnel; wp-config para telsolis.tech | ____ |
+| 2026-11-24 | PaaS | Certificado de Let's Encrypt con respaldo en la VM docker; pruebas desde el celular con datos móviles | ____ |
+| 2026-11-24 | PaaS | Servicio 5 de Compose: MySQL 8.4 (imagen oficial) como BD del WordPress de Kubernetes; script de inicio con usuario wpk8s limitado a la VM k8s | ____ |
+| 2026-11-24 | PaaS | Registro mysql.telsolis.test y pruebas: permisos, rechazo desde web (.12) y persistencia del volumen | ____ |
 | | | **Total** | **____** |
