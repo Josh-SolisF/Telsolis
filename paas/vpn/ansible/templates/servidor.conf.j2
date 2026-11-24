@@ -1,0 +1,31 @@
+# Telsolis: instancia "{{ item.nombre }}" de OpenVPN (generado por Ansible)
+# Cliente: {{ item.cliente }} | Interfaz: {{ item.dev | upper }} | Protocolo: TCP {{ item.puerto }}
+port {{ item.puerto }}
+proto tcp
+dev {{ item.dev }}
+{% if item.dev == 'tun' %}
+topology subnet
+{% endif %}
+
+# Certificados (PKI propia de la VPN, creada con easy-rsa)
+ca   {{ pki_dir }}/ca.crt
+cert {{ pki_dir }}/server.crt
+key  {{ pki_dir }}/server.key
+dh none
+tls-crypt {{ pki_dir }}/ta.key
+data-ciphers AES-256-GCM:AES-128-GCM:CHACHA20-POLY1305
+
+# Red de los clientes de esta instancia
+server {{ item.red }} 255.255.255.0
+
+# Todo el tráfico del cliente sale a internet por este servidor
+push "redirect-gateway def1 bypass-dhcp"
+push "dhcp-option DNS 1.1.1.1"
+push "dhcp-option DNS 8.8.8.8"
+
+keepalive 10 120
+user nobody
+group nogroup
+persist-key
+persist-tun
+verb 3

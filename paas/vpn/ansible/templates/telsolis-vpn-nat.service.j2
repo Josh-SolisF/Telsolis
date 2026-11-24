@@ -1,0 +1,14 @@
+# Telsolis: NAT de los clientes de la VPN hacia internet (generado por Ansible)
+[Unit]
+Description=Telsolis: NAT de la VPN ({{ vpn_redes }} -> {{ ansible_default_ipv4.interface }})
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/iptables -t nat -A POSTROUTING -s {{ vpn_redes }} -o {{ ansible_default_ipv4.interface }} -j MASQUERADE
+ExecStop=/usr/sbin/iptables -t nat -D POSTROUTING -s {{ vpn_redes }} -o {{ ansible_default_ipv4.interface }} -j MASQUERADE
+
+[Install]
+WantedBy=multi-user.target

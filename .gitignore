@@ -13,3 +13,10 @@ wp-config.php
 .terraform.lock.hcl.bak
 *.ovpn
 paas/vpn/ansible/clientes/
+# Terraform / AWS / VPN
+.terraform/
+*.tfvars
+*.tfplan
+*.ovpn
+paas/vpn/ansible/inventario.ini
+paas/vpn/ansible/clientes/
