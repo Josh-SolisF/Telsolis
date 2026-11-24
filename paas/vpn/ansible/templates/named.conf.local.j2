@@ -1,0 +1,5 @@
+// Telsolis: zonas de las que este servidor es autoridad (generado por Ansible)
+zone "{{ dominio }}" {
+    type primary;
+    file "/etc/bind/db.{{ dominio }}";
+};

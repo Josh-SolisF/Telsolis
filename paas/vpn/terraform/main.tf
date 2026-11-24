@@ -54,6 +54,39 @@ resource "aws_security_group" "vpn" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # Fase 5: DNS autoritativo de telsolis.tech y sitio web público
+  ingress {
+    description = "DNS (UDP) - BIND autoritativo de telsolis.tech"
+    from_port   = 53
+    to_port     = 53
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "DNS (TCP) - BIND autoritativo de telsolis.tech"
+    from_port   = 53
+    to_port     = 53
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTP - sitio publico (y validacion de Lets Encrypt)"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTPS - sitio publico"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   ingress {
     description = "SSH solo desde la IP de quien corre Terraform"
     from_port   = 22

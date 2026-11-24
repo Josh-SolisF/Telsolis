@@ -4,9 +4,13 @@
 #   - tap (TCP 1194): computadora, interfaz TAP (lo que pide el enunciado)
 #   - tun (TCP 1195): teléfono, interfaz TUN (Android/iOS no soportan TAP; autorizado por el profesor)
 # Todo el tráfico de los clientes sale a internet por este servidor (redirect-gateway + NAT).
-# Al final genera en clientes/ los perfiles .ovpn listos para importar.
 #
-# Uso:  ansible-playbook vpn.yml
+# La PKI (CA de la VPN y certificados) se crea UNA sola vez en la máquina que corre Ansible
+# (la VM docker), fuera del repositorio, en {{ pki_local }}. Cada servidor nuevo recibe una copia,
+# así los perfiles .ovpn siguen sirviendo aunque el servidor se destruya y se vuelva a crear.
+#
+# Requisitos en la VM docker:  sudo apt install -y easy-rsa openvpn
+# Uso:                         ansible-playbook vpn.yml
 
 - name: Servidor OpenVPN Telsolis
   hosts: vpn
@@ -14,7 +18,7 @@
   gather_facts: false
 
   vars:
-    easyrsa_dir: /etc/openvpn/easy-rsa
+    pki_local: "{{ lookup('env', 'HOME') }}/telsolis-vpn-pki"
     pki_dir: /etc/openvpn/server/pki
     vpn_redes: 10.8.0.0/16
     vpn_instancias:
@@ -28,6 +32,14 @@
         puerto: 1195
         red: 10.8.2.0
         cliente: telefono
+    # Perfiles de cliente. ruta_todo: true = todo el tráfico sale por AWS (PC y teléfono).
+    # "web" (Fase 5) es la VM del WordPress: solo usa el túnel para recibir las visitas
+    # que llegan a telsolis.tech, con IP fija dentro del túnel.
+    vpn_perfiles:
+      - { cliente: pc, dev: tap, puerto: 1194, ruta_todo: true }
+      - { cliente: telefono, dev: tun, puerto: 1195, ruta_todo: true }
+      - { cliente: web, dev: tun, puerto: 1195, ruta_todo: false }
+    web_tunel_ip: 10.8.2.200
 
   handlers:
     - name: Aplicar sysctl
@@ -41,7 +53,77 @@
       loop: "{{ vpn_instancias }}"
 
   tasks:
-    # --- Preparación ---------------------------------------------------------
+    # --- PKI local (VM docker): se crea una sola vez ------------------------
+    - name: Revisar que easy-rsa y openvpn estén instalados en la VM docker
+      ansible.builtin.command: which make-cadir openvpn
+      changed_when: false
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Crear el directorio local de easy-rsa (fuera del repo)
+      ansible.builtin.command: make-cadir {{ pki_local }}
+      args:
+        creates: "{{ pki_local }}"
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Inicializar la PKI
+      ansible.builtin.command: ./easyrsa init-pki
+      args:
+        chdir: "{{ pki_local }}"
+        creates: "{{ pki_local }}/pki"
+      environment:
+        EASYRSA_BATCH: "1"
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Crear la CA de la VPN
+      ansible.builtin.command: ./easyrsa build-ca nopass
+      args:
+        chdir: "{{ pki_local }}"
+        creates: "{{ pki_local }}/pki/ca.crt"
+      environment:
+        EASYRSA_BATCH: "1"
+        EASYRSA_REQ_CN: "Telsolis VPN CA"
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Crear el certificado del servidor
+      ansible.builtin.command: ./easyrsa build-server-full server nopass
+      args:
+        chdir: "{{ pki_local }}"
+        creates: "{{ pki_local }}/pki/issued/server.crt"
+      environment:
+        EASYRSA_BATCH: "1"
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Crear los certificados de los clientes
+      ansible.builtin.command: ./easyrsa build-client-full {{ item.cliente }} nopass
+      args:
+        chdir: "{{ pki_local }}"
+        creates: "{{ pki_local }}/pki/issued/{{ item.cliente }}.crt"
+      environment:
+        EASYRSA_BATCH: "1"
+      loop: "{{ vpn_perfiles }}"
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Crear la llave tls-crypt (cifra y autentica el canal de control)
+      ansible.builtin.command: openvpn --genkey secret {{ pki_local }}/pki/ta.key
+      args:
+        creates: "{{ pki_local }}/pki/ta.key"
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    # --- Preparación del servidor -------------------------------------------
     - name: Esperar a que el servidor acepte SSH
       ansible.builtin.wait_for_connection:
         timeout: 300
@@ -55,9 +137,9 @@
     - name: Recolectar datos del servidor (interfaz de red, etc.)
       ansible.builtin.setup:
 
-    - name: Instalar OpenVPN, easy-rsa e iptables
+    - name: Instalar OpenVPN e iptables
       ansible.builtin.apt:
-        name: [openvpn, easy-rsa, iptables]
+        name: [openvpn, iptables]
         update_cache: true
         lock_timeout: 300
 
@@ -68,62 +150,16 @@
         mode: "0644"
       notify: Aplicar sysctl
 
-    # --- PKI: CA propia de la VPN y certificados (easy-rsa) -----------------
-    - name: Crear el directorio de easy-rsa
-      ansible.builtin.command: make-cadir {{ easyrsa_dir }}
-      args:
-        creates: "{{ easyrsa_dir }}"
-
-    - name: Inicializar la PKI
-      ansible.builtin.command: ./easyrsa init-pki
-      args:
-        chdir: "{{ easyrsa_dir }}"
-        creates: "{{ easyrsa_dir }}/pki"
-      environment:
-        EASYRSA_BATCH: "1"
-
-    - name: Crear la CA de la VPN
-      ansible.builtin.command: ./easyrsa build-ca nopass
-      args:
-        chdir: "{{ easyrsa_dir }}"
-        creates: "{{ easyrsa_dir }}/pki/ca.crt"
-      environment:
-        EASYRSA_BATCH: "1"
-        EASYRSA_REQ_CN: "Telsolis VPN CA"
-
-    - name: Crear el certificado del servidor
-      ansible.builtin.command: ./easyrsa build-server-full server nopass
-      args:
-        chdir: "{{ easyrsa_dir }}"
-        creates: "{{ easyrsa_dir }}/pki/issued/server.crt"
-      environment:
-        EASYRSA_BATCH: "1"
-
-    - name: Crear los certificados de los clientes
-      ansible.builtin.command: ./easyrsa build-client-full {{ item.cliente }} nopass
-      args:
-        chdir: "{{ easyrsa_dir }}"
-        creates: "{{ easyrsa_dir }}/pki/issued/{{ item.cliente }}.crt"
-      environment:
-        EASYRSA_BATCH: "1"
-      loop: "{{ vpn_instancias }}"
-
-    - name: Crear la llave tls-crypt (cifra y autentica el canal de control)
-      ansible.builtin.command: openvpn --genkey secret {{ easyrsa_dir }}/pki/ta.key
-      args:
-        creates: "{{ easyrsa_dir }}/pki/ta.key"
-
     - name: Crear el directorio de llaves del servidor
       ansible.builtin.file:
         path: "{{ pki_dir }}"
         state: directory
         mode: "0700"
 
-    - name: Copiar CA, certificado, llave del servidor y tls-crypt
+    - name: Copiar CA, certificado, llave del servidor y tls-crypt desde la VM docker
       ansible.builtin.copy:
-        src: "{{ easyrsa_dir }}/pki/{{ item.origen }}"
+        src: "{{ pki_local }}/pki/{{ item.origen }}"
         dest: "{{ pki_dir }}/{{ item.destino }}"
-        remote_src: true
         mode: "0600"
       loop:
         - { origen: ca.crt, destino: ca.crt }
@@ -133,6 +169,18 @@
       notify: Reiniciar OpenVPN
 
     # --- Servidores OpenVPN y NAT -------------------------------------------
+    - name: Directorio de configuración por cliente (IP fija de la VM web en el túnel)
+      ansible.builtin.file:
+        path: /etc/openvpn/server/ccd
+        state: directory
+        mode: "0755"
+
+    - name: IP fija para la VM web dentro del túnel TUN
+      ansible.builtin.copy:
+        dest: /etc/openvpn/server/ccd/web
+        content: "ifconfig-push {{ web_tunel_ip }} 255.255.255.0\n"
+        mode: "0644"
+
     - name: Configuración de cada instancia de OpenVPN
       ansible.builtin.template:
         src: servidor.conf.j2
@@ -162,29 +210,6 @@
       loop: "{{ vpn_instancias }}"
 
     # --- Perfiles de los clientes (.ovpn) -----------------------------------
-    - name: Leer el certificado de la CA
-      ansible.builtin.slurp:
-        src: "{{ easyrsa_dir }}/pki/ca.crt"
-      register: ca_crt
-
-    - name: Leer la llave tls-crypt
-      ansible.builtin.slurp:
-        src: "{{ easyrsa_dir }}/pki/ta.key"
-      register: ta_key
-
-    - name: Leer los certificados de los clientes
-      ansible.builtin.slurp:
-        src: "{{ easyrsa_dir }}/pki/issued/{{ item.cliente }}.crt"
-      loop: "{{ vpn_instancias }}"
-      register: clientes_crt
-
-    - name: Leer las llaves de los clientes
-      ansible.builtin.slurp:
-        src: "{{ easyrsa_dir }}/pki/private/{{ item.cliente }}.key"
-      loop: "{{ vpn_instancias }}"
-      register: clientes_key
-      no_log: true
-
     - name: Crear la carpeta local de perfiles
       ansible.builtin.file:
         path: "{{ playbook_dir }}/clientes"
@@ -197,10 +222,10 @@
     - name: Generar los perfiles .ovpn
       ansible.builtin.template:
         src: cliente.ovpn.j2
-        dest: "{{ playbook_dir }}/clientes/{{ item.0.cliente }}-{{ item.0.dev }}.ovpn"
+        dest: "{{ playbook_dir }}/clientes/{{ item.cliente }}-{{ item.dev }}.ovpn"
         mode: "0600"
-      loop: "{{ vpn_instancias | zip(clientes_crt.results, clientes_key.results) | list }}"
+      loop: "{{ vpn_perfiles }}"
       loop_control:
-        label: "{{ item.0.cliente }}-{{ item.0.dev }}.ovpn"
+        label: "{{ item.cliente }}-{{ item.dev }}.ovpn"
       delegate_to: localhost
       become: false

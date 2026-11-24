@@ -1,0 +1,177 @@
+# Telsolis - Fase 5: acceso público al CMS con nombre de dominio
+#
+# En el servidor de AWS (3.224.93.59):
+#   - BIND: DNS autoritativo de telsolis.tech (ns1/ns2.telsolis.tech están registrados en name.com)
+#   - Nginx: recibe las visitas a telsolis.tech y las reenvía por el túnel OpenVPN
+#            a la VM web (WordPress de la Fase 2), que está en la IP fija {{ web_tunel_ip }} del túnel
+#   - Let's Encrypt: certificado público para HTTPS (el celular confía sin instalar nuestra CA)
+#
+# Uso:
+#   ansible-playbook publico.yml                                  # DNS + sitio por HTTP
+#   ansible-playbook publico.yml -e obtener_certificado=true      # cuando el DNS ya propagó: agrega HTTPS
+#
+# El certificado se respalda en la VM docker (junto a la PKI de la VPN) y se restaura en cada
+# servidor nuevo, para no pedir uno nuevo a Let's Encrypt cada vez (tiene límites semanales).
+
+- name: DNS público y proxy web de telsolis.tech
+  hosts: vpn
+  become: true
+
+  vars:
+    dominio: telsolis.tech
+    zona_serial: 2026112401          # subirlo cada vez que se cambie la zona
+    web_tunel_ip: 10.8.2.200
+    obtener_certificado: false
+    pki_local: "{{ lookup('env', 'HOME') }}/telsolis-vpn-pki"
+    le_respaldo: "{{ pki_local }}/letsencrypt.tar.gz"
+    le_cert: "/etc/letsencrypt/live/{{ dominio }}/fullchain.pem"
+
+  handlers:
+    - name: Reiniciar BIND
+      ansible.builtin.systemd:
+        name: named
+        state: restarted
+
+    - name: Recargar Nginx
+      ansible.builtin.systemd:
+        name: nginx
+        state: reloaded
+
+  tasks:
+    - name: Instalar BIND, Nginx y certbot
+      ansible.builtin.apt:
+        name: [bind9, nginx, certbot]
+        update_cache: true
+        lock_timeout: 300
+
+    # --- DNS autoritativo -----------------------------------------------------
+    - name: Opciones de BIND (autoritativo, sin recursión)
+      ansible.builtin.template:
+        src: named.conf.options.j2
+        dest: /etc/bind/named.conf.options
+        mode: "0644"
+      notify: Reiniciar BIND
+
+    - name: Declarar la zona telsolis.tech
+      ansible.builtin.template:
+        src: named.conf.local.j2
+        dest: /etc/bind/named.conf.local
+        mode: "0644"
+      notify: Reiniciar BIND
+
+    - name: Archivo de zona de telsolis.tech
+      ansible.builtin.template:
+        src: db.telsolis.tech.j2
+        dest: "/etc/bind/db.{{ dominio }}"
+        mode: "0644"
+        validate: "named-checkzone {{ dominio }} %s"
+      notify: Reiniciar BIND
+
+    - name: Activar BIND
+      ansible.builtin.systemd:
+        name: named
+        enabled: true
+        state: started
+
+    # --- Certificado: restaurar respaldo si existe --------------------------
+    - name: ¿Hay respaldo local del certificado de Let's Encrypt?
+      ansible.builtin.stat:
+        path: "{{ le_respaldo }}"
+      register: respaldo_local
+      delegate_to: localhost
+      become: false
+
+    - name: ¿El servidor ya tiene el certificado?
+      ansible.builtin.stat:
+        path: "{{ le_cert }}"
+      register: cert_remoto
+
+    - name: Restaurar el certificado en este servidor
+      ansible.builtin.unarchive:
+        src: "{{ le_respaldo }}"
+        dest: /
+      when: respaldo_local.stat.exists and not cert_remoto.stat.exists
+
+    - name: Revisar el certificado de nuevo
+      ansible.builtin.stat:
+        path: "{{ le_cert }}"
+      register: cert_remoto
+
+    # --- Nginx ----------------------------------------------------------------
+    - name: Carpeta para la validación de Let's Encrypt
+      ansible.builtin.file:
+        path: /var/www/letsencrypt
+        state: directory
+        mode: "0755"
+
+    - name: Quitar el sitio por defecto de Nginx
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+      notify: Recargar Nginx
+
+    - name: Sitio de telsolis.tech (proxy hacia la VM web por el túnel)
+      ansible.builtin.template:
+        src: nginx-telsolis.conf.j2
+        dest: /etc/nginx/sites-available/telsolis
+        mode: "0644"
+      vars:
+        cert_existe: "{{ cert_remoto.stat.exists }}"
+      notify: Recargar Nginx
+
+    - name: Activar el sitio
+      ansible.builtin.file:
+        src: /etc/nginx/sites-available/telsolis
+        dest: /etc/nginx/sites-enabled/telsolis
+        state: link
+      notify: Recargar Nginx
+
+    - name: Validar la configuración de Nginx
+      ansible.builtin.command: nginx -t
+      changed_when: false
+
+    - name: Activar Nginx
+      ansible.builtin.systemd:
+        name: nginx
+        enabled: true
+        state: started
+
+    - name: Aplicar la configuración de Nginx ahora
+      ansible.builtin.meta: flush_handlers
+
+    # --- Certificado nuevo (solo cuando se pide y el DNS ya propagó) --------
+    - name: Pedir el certificado a Let's Encrypt
+      ansible.builtin.command: >
+        certbot certonly --webroot -w /var/www/letsencrypt
+        -d {{ dominio }} -d www.{{ dominio }}
+        --non-interactive --agree-tos --register-unsafely-without-email
+        --deploy-hook "systemctl reload nginx"
+      args:
+        creates: "{{ le_cert }}"
+      when: obtener_certificado | bool
+
+    - name: Revisar si ya hay certificado
+      ansible.builtin.stat:
+        path: "{{ le_cert }}"
+      register: cert_final
+
+    - name: Sitio con HTTPS
+      ansible.builtin.template:
+        src: nginx-telsolis.conf.j2
+        dest: /etc/nginx/sites-available/telsolis
+        mode: "0644"
+      vars:
+        cert_existe: "{{ cert_final.stat.exists }}"
+      notify: Recargar Nginx
+
+    - name: Empaquetar el certificado para respaldarlo
+      ansible.builtin.command: tar -czf /root/letsencrypt.tar.gz /etc/letsencrypt
+      when: cert_final.stat.exists
+      changed_when: false
+
+    - name: Respaldar el certificado en la VM docker
+      ansible.builtin.fetch:
+        src: /root/letsencrypt.tar.gz
+        dest: "{{ le_respaldo }}"
+        flat: true
+      when: cert_final.stat.exists

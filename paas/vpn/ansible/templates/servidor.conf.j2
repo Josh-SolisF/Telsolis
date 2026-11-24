@@ -5,6 +5,8 @@ proto tcp
 dev {{ item.dev }}
 {% if item.dev == 'tun' %}
 topology subnet
+# IP fija por cliente (la VM web usa {{ web_tunel_ip }})
+client-config-dir /etc/openvpn/server/ccd
 {% endif %}
 
 # Certificados (PKI propia de la VPN, creada con easy-rsa)

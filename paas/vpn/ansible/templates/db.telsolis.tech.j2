@@ -1,0 +1,17 @@
+; Telsolis: zona pública {{ dominio }} (generado por Ansible)
+$TTL 300
+@   IN  SOA ns1.{{ dominio }}. admin.{{ dominio }}. (
+        {{ zona_serial }} ; serial
+        3600       ; refresh
+        900        ; retry
+        604800     ; expire
+        300 )      ; negative TTL
+
+@       IN  NS  ns1.{{ dominio }}.
+@       IN  NS  ns2.{{ dominio }}.
+
+ns1     IN  A   {{ vpn_ip_publica }}
+ns2     IN  A   {{ vpn_ip_publica }}
+@       IN  A   {{ vpn_ip_publica }}
+www     IN  A   {{ vpn_ip_publica }}
+vpn     IN  A   {{ vpn_ip_publica }}

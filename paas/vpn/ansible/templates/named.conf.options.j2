@@ -1,0 +1,11 @@
+// Telsolis: BIND autoritativo de {{ dominio }} (generado por Ansible)
+// Solo responde por su zona; no hace recursión para terceros (evita ataques de amplificación).
+options {
+    directory "/var/cache/bind";
+    recursion no;
+    allow-query { any; };
+    allow-transfer { none; };
+    listen-on { any; };
+    listen-on-v6 { any; };
+    dnssec-validation auto;
+};

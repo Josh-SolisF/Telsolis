@@ -1,0 +1,44 @@
+# Telsolis: {{ dominio }} -> WordPress de la VM web por el túnel OpenVPN ({{ web_tunel_ip }})
+# Generado por Ansible. Certificado de Let's Encrypt: {{ 'sí' if cert_existe | bool else 'todavía no' }}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name {{ dominio }} www.{{ dominio }};
+
+    # Validación de Let's Encrypt (también para las renovaciones)
+    location /.well-known/acme-challenge/ {
+        root /var/www/letsencrypt;
+    }
+
+    location / {
+{% if cert_existe | bool %}
+        return 301 https://$host$request_uri;
+{% else %}
+        proxy_pass http://{{ web_tunel_ip }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 5s;
+{% endif %}
+    }
+}
+{% if cert_existe | bool %}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name {{ dominio }} www.{{ dominio }};
+
+    ssl_certificate     /etc/letsencrypt/live/{{ dominio }}/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/{{ dominio }}/privkey.pem;
+
+    location / {
+        proxy_pass http://{{ web_tunel_ip }};
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_connect_timeout 5s;
+    }
+}
+{% endif %}
