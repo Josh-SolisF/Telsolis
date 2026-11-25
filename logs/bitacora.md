@@ -71,4 +71,6 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-24 | PaaS | Extra 1: Uptime Kuma 2 en Compose con DNS de la LAN y la CA propia; recursión del BIND para la red de Docker | ____ |
 | 2026-11-24 | PaaS | Monitores de todos los servicios (LAN, Kubernetes, AWS) y página de estado pública | ____ |
 | 2026-11-24 | PaaS | Extra 2: Gitea 28.4.0 en Compose (SQLite), registro git.telsolis.test, migración de un repo de GitHub y push desde web | ____ |
+| 2026-11-24 | PaaS | Servicio 6: Schleuder 5 (imagen propia Debian 13 + Postfix con transporte pipe), IP 192.168.56.14, subdominio listas.telsolis.test con MX | ____ |
+| 2026-11-24 | PaaS | Lista redes@ con llaves OpenPGP (ECC) de Thunderbird; diagnóstico de Net::ReadTimeout (salida por el Postfix local); prueba de correo cifrado re-cifrado a cada miembro | ____ |
 | | | **Total** | **____** |

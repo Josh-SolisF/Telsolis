@@ -1,0 +1,7 @@
+# Telsolis: direcciones de cada lista -> transporte "schleuder" (definido en master.cf)
+# Una lista usa 5 direcciones: la lista, -request, -owner, -bounce y -sendkey (devuelve la llave pública).
+redes@listas.telsolis.test           schleuder:
+redes-request@listas.telsolis.test   schleuder:
+redes-owner@listas.telsolis.test     schleuder:
+redes-bounce@listas.telsolis.test    schleuder:
+redes-sendkey@listas.telsolis.test   schleuder:

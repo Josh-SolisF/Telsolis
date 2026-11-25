@@ -1,6 +1,6 @@
 $TTL 3600
 @   IN  SOA ns1.telsolis.test. admin.telsolis.test. (
-        2026112307  ; serial (subirlo cada vez que se edite la zona)
+        2026112308  ; serial (subirlo cada vez que se edite la zona)
         3600        ; refresh
         900         ; retry
         604800      ; expire
@@ -22,3 +22,5 @@ mysql    IN  A   192.168.56.10
 cms      IN  A   192.168.56.13
 kuma     IN  A   192.168.56.10
 git      IN  A   192.168.56.10
+listas   IN  A   192.168.56.14
+listas   IN  MX  10 listas.telsolis.test.

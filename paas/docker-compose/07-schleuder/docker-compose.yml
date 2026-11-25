@@ -1,0 +1,26 @@
+# Telsolis: Encrypted Mail List Server (Schleuder) para listas @listas.telsolis.test
+# Recibe por SMTP en 192.168.56.14:25 (MX de listas.telsolis.test) y reenvía cifrado
+# a cada miembro a través del servidor de correo (mail.telsolis.test).
+services:
+  schleuder:
+    build: .
+    image: telsolis/schleuder
+    container_name: schleuder
+    hostname: listas.telsolis.test
+    restart: unless-stopped
+    dns:
+      - 192.168.56.10
+    environment:
+      SMTP_HOST: localhost
+      SMTP_PORT: "25"
+    ports:
+      - "192.168.56.14:25:25"
+    volumes:
+      - schleuder-datos:/var/lib/schleuder       # BD, llaves GnuPG de las listas, clave de la API
+      - schleuder-logs:/var/log/schleuder
+      - ./postfix/transport_schleuder:/config/transport_schleuder:ro
+      - ../../ca/telsolis-ca.crt:/usr/local/share/ca-certificates/telsolis-ca.crt:ro
+
+volumes:
+  schleuder-datos:
+  schleuder-logs:
