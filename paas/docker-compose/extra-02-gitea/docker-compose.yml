@@ -1,0 +1,26 @@
+# Telsolis (extra): Gitea, servidor Git propio (repositorios, issues, pull requests).
+# Base de datos SQLite incluida (no necesita otro MySQL). Web en :3000 y Git por SSH en :2222.
+services:
+  gitea:
+    image: gitea/gitea:28.4.0
+    container_name: gitea
+    restart: unless-stopped
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      GITEA__server__DOMAIN: git.telsolis.test
+      GITEA__server__ROOT_URL: http://git.telsolis.test:3000/
+      GITEA__server__SSH_DOMAIN: git.telsolis.test
+      GITEA__server__SSH_PORT: "2222"
+      GITEA__database__DB_TYPE: sqlite3
+    dns:
+      - 192.168.56.10
+    ports:
+      - "192.168.56.10:3000:3000"     # web
+      - "192.168.56.10:2222:22"       # git por SSH
+    volumes:
+      - gitea-datos:/data
+      - /etc/localtime:/etc/localtime:ro
+
+volumes:
+  gitea-datos:

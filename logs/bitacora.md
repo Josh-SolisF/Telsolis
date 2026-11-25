@@ -70,4 +70,5 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-24 | PaaS | Instalación de WordPress en Kubernetes; escalado a 2 réplicas y prueba de autorreparación | ____ |
 | 2026-11-24 | PaaS | Extra 1: Uptime Kuma 2 en Compose con DNS de la LAN y la CA propia; recursión del BIND para la red de Docker | ____ |
 | 2026-11-24 | PaaS | Monitores de todos los servicios (LAN, Kubernetes, AWS) y página de estado pública | ____ |
+| 2026-11-24 | PaaS | Extra 2: Gitea 28.4.0 en Compose (SQLite), registro git.telsolis.test, migración de un repo de GitHub y push desde web | ____ |
 | | | **Total** | **____** |
