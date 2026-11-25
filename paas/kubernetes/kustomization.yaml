@@ -1,0 +1,12 @@
+# Telsolis - Fase 6: WordPress en Kubernetes (k3s, VM k8s 192.168.56.13)
+# Aplicar todo:  kubectl apply -k .
+# El Secret con la contraseña de la BD NO está aquí: se crea aparte (ver README.md).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: telsolis-cms
+resources:
+  - 00-namespace.yaml
+  - 01-pvc.yaml
+  - 02-deployment.yaml
+  - 03-service.yaml
+  - 04-ingress.yaml

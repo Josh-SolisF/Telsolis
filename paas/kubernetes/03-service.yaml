@@ -1,0 +1,12 @@
+# Nombre y dirección estables dentro del clúster para todas las réplicas de WordPress
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress
+spec:
+  selector:
+    app: wordpress
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

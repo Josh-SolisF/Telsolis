@@ -1,0 +1,19 @@
+# Publica el CMS fuera del clúster: Traefik (Ingress de k3s) recibe en el puerto 80 de la VM k8s
+# las peticiones a cms.telsolis.test y las reparte entre las réplicas del Service.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wordpress
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: cms.telsolis.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: wordpress
+                port:
+                  name: http

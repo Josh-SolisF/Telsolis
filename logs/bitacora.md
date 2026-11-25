@@ -65,4 +65,7 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-24 | PaaS | Certificado de Let's Encrypt con respaldo en la VM docker; pruebas desde el celular con datos móviles | ____ |
 | 2026-11-24 | PaaS | Servicio 5 de Compose: MySQL 8.4 (imagen oficial) como BD del WordPress de Kubernetes; script de inicio con usuario wpk8s limitado a la VM k8s | ____ |
 | 2026-11-24 | PaaS | Registro mysql.telsolis.test y pruebas: permisos, rechazo desde web (.12) y persistencia del volumen | ____ |
+| 2026-11-24 | PaaS | VM k8s (.13, clon de db) e instalación de k3s con node-ip y flannel en la LAN | ____ |
+| 2026-11-24 | PaaS | Manifiestos de WordPress (Namespace, PVC, Deployment, Service, Ingress) con BD en el MySQL de Compose; Secret fuera del repo; cms.telsolis.test | ____ |
+| 2026-11-24 | PaaS | Instalación de WordPress en Kubernetes; escalado a 2 réplicas y prueba de autorreparación | ____ |
 | | | **Total** | **____** |

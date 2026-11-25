@@ -1,0 +1,5 @@
+# Espacio de nombres propio para el CMS: separa sus recursos de los de k3s
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: telsolis-cms

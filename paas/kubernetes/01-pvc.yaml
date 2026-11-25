@@ -1,0 +1,13 @@
+# Almacenamiento persistente para /var/www/html (código de WordPress, wp-config.php y archivos subidos).
+# Lo provee "local-path", el aprovisionador que trae k3s (un directorio en el disco de la VM).
+# Las réplicas comparten este volumen, así todas usan el mismo wp-config.php y las mismas llaves.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wordpress-archivos
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 2Gi
