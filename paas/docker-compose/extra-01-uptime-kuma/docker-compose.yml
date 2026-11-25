@@ -1,0 +1,19 @@
+# Telsolis (extra): Uptime Kuma 2, panel que monitorea todos los servicios de la infraestructura.
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:2
+    container_name: uptime-kuma
+    restart: unless-stopped
+    ports:
+      - "192.168.56.10:3001:3001"
+    dns:
+      - 192.168.56.10                  # BIND de la LAN: resuelve *.telsolis.test
+    environment:
+      # Confiar en la CA propia para los monitores HTTPS de *.telsolis.test
+      NODE_EXTRA_CA_CERTS: /certs/telsolis-ca.crt
+    volumes:
+      - kuma-datos:/app/data
+      - ../../ca/telsolis-ca.crt:/certs/telsolis-ca.crt:ro
+
+volumes:
+  kuma-datos:

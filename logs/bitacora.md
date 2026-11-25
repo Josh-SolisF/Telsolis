@@ -68,4 +68,6 @@ Las filas con fecha `____` deben completarse.
 | 2026-11-24 | PaaS | VM k8s (.13, clon de db) e instalación de k3s con node-ip y flannel en la LAN | ____ |
 | 2026-11-24 | PaaS | Manifiestos de WordPress (Namespace, PVC, Deployment, Service, Ingress) con BD en el MySQL de Compose; Secret fuera del repo; cms.telsolis.test | ____ |
 | 2026-11-24 | PaaS | Instalación de WordPress en Kubernetes; escalado a 2 réplicas y prueba de autorreparación | ____ |
+| 2026-11-24 | PaaS | Extra 1: Uptime Kuma 2 en Compose con DNS de la LAN y la CA propia; recursión del BIND para la red de Docker | ____ |
+| 2026-11-24 | PaaS | Monitores de todos los servicios (LAN, Kubernetes, AWS) y página de estado pública | ____ |
 | | | **Total** | **____** |
